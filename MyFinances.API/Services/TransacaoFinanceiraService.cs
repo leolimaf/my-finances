@@ -17,13 +17,15 @@ public class TransacaoFinanceiraService : ITransacaoFinanceiraService
     private readonly IMapper _mapper;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly SieveProcessor _sieveProcessor;
+    private readonly ILinkService _linkService;
 
-    public TransacaoFinanceiraService(AppDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor, SieveProcessor sieveProcessor)
+    public TransacaoFinanceiraService(AppDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor, SieveProcessor sieveProcessor, ILinkService linkService)
     {
         _context = context;
         _mapper = mapper;
         _httpContextAccessor = httpContextAccessor;
         _sieveProcessor = sieveProcessor;
+        _linkService = linkService;
     }
 
     public ReadTransacaoDTO AdicionarTransacao(CreateTransacaoDTO transacaoDto)
@@ -38,11 +40,14 @@ public class TransacaoFinanceiraService : ITransacaoFinanceiraService
     public ReadTransacaoDTO ObterTransacaoPorId(Guid id)
     {
         var transacao = _context.TransacoesFinanceiras.Find(id);
+
+        if (transacao is null || transacao.IdUsuario != ObterIdDoUsuarioAutenticado()) 
+            return null!;
         
-        if (transacao is not null && transacao.IdUsuario == ObterIdDoUsuarioAutenticado())
-            return _mapper.Map<ReadTransacaoDTO>(transacao);
-        
-        return null!;
+        var transacaoDto = _mapper.Map<ReadTransacaoDTO>(transacao);
+        AdicionarLinksParaTransacoes(transacaoDto);
+
+        return transacaoDto;
     }
 
     public List<ReadTransacaoDTO> ListarTransacoes(SieveModel model)
@@ -111,5 +116,26 @@ public class TransacaoFinanceiraService : ITransacaoFinanceiraService
             .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
         
         return idUsuario is not null ? new Guid(idUsuario) : default;
+    }
+
+    private void AdicionarLinksParaTransacoes(ReadTransacaoDTO transacaoDto)
+    {
+        transacaoDto.Links.Add(
+            _linkService.Generate("obter-por-id", 
+                new { transacaoDto.Id },
+            "self",
+            "GET"));
+        
+        transacaoDto.Links.Add(
+            _linkService.Generate("atualizar", 
+                new { transacaoDto.Id },
+            "atualizar",
+            "PUT"));
+        
+        transacaoDto.Links.Add(
+            _linkService.Generate("remover", 
+                new { transacaoDto.Id },
+            "remover",
+            "DELETE"));
     }
 }

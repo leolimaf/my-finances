@@ -41,6 +41,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\MyFinances.Domain\MyFinances.Domain.csproj" />
+      <ProjectReference Include="..\MyFinances.Useful\MyFinances.Useful.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -39,7 +39,7 @@ public class TransacaoFinanceiraController : ControllerBase
     /// <param name="id">Identificador da transação financeira</param>
     /// <response code="200">Requisição realizada com sucesso</response>
     /// <response code="404">A transação não foi encontrada</response>
-    [HttpGet, Route("obter-por-id")]
+    [HttpGet, Route("obter-por-id", Name = "obter-por-id"), EndpointName("obter-por-id")]
     [ProducesResponseType(200, Type = typeof(ReadTransacaoDTO))]
     [ProducesResponseType(404, Type = null!)]
     public IActionResult ObterTransacaoPorId(Guid id)

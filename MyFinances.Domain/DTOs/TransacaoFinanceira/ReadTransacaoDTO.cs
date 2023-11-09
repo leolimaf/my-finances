@@ -1,4 +1,5 @@
-﻿using MyFinances.Domain.Models;
+﻿using MyFinances.Domain.DTOs.Link;
+using MyFinances.Domain.Models;
 using Sieve.Attributes;
 
 namespace MyFinances.Domain.DTOs.TransacaoFinanceira;
@@ -19,4 +20,6 @@ public class ReadTransacaoDTO
     public TipoTransacao Tipo { get; set; }
     
     public Guid IdUsuario { get; set; }
+
+    public List<LinkDTO> Links { get; set; } = new();
 }
