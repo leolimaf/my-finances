@@ -164,7 +164,7 @@ const Register = () => {
                             onFocus={() => setPwdFocus(true)}
                             onBlur={() => setPwdFocus(false)}
                         />
-                        <p id="pwdnote" className={pwdFocus && !validPwd ? "instructions" : "offscreen"}>
+                        <p id="pwdnote" className={pwdFocus && pwd && !validPwd ? "instructions" : "offscreen"}>
                             <FaInfoCircle />
                             8 a 24 caracteres.<br />
                             Deve conter ao menos uma letra minuscula, uma letra maiuscula e um número.<br />
